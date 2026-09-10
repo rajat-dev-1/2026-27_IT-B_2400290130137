@@ -81,9 +81,6 @@ export default function HeroSection() {
       >
         <CanvasNeuralMesh
           bgColor={L.bg}
-          centerX={0.52}
-          centerY={0.50}
-          radiusScale={0.74}
         />
       </div>
 
