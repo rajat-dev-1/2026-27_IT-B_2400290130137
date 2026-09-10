@@ -62,10 +62,11 @@ export default function LandingNav() {
         transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
         style={{
           position: 'fixed', top: 0, left: 0, right: 0, zIndex: 50,
-          transition: 'all 0.4s ease',
-          backgroundColor: scrolled ? 'rgba(235,232,227,0.9)' : 'transparent',
-          backdropFilter: scrolled ? 'blur(16px)' : 'none',
-          borderBottom: scrolled ? `1px solid ${L.border}` : '1px solid transparent',
+          transition: 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
+          backgroundColor: scrolled ? 'rgba(235,232,227,0.92)' : 'rgba(235,232,227,0.12)',
+          backdropFilter: scrolled ? 'blur(16px)' : 'blur(6px)',
+          WebkitBackdropFilter: scrolled ? 'blur(16px)' : 'blur(6px)',
+          borderBottom: scrolled ? `1px solid ${L.border}` : '1px solid rgba(30,24,14,0.06)',
         }}
         role="navigation"
         aria-label="Main navigation"

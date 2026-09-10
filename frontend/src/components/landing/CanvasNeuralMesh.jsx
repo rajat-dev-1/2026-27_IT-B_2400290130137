@@ -58,17 +58,22 @@ function projectInline(px, py, pz, rx, ry, radius, fov, cx, cy) {
   return { sx: cx + x1 * s, sy: cy - y2 * s, z: z2, d: (z2 + 1) * 0.5 };
 }
 
-export default function CanvasNeuralMesh({ bgColor = '#EBE8E3' }) {
+export default function CanvasNeuralMesh({
+  bgColor = '#EBE8E3',
+  centerX = 0.5,
+  centerY = 0.5,
+  radiusScale = 0.72,
+}) {
   const canvasRef = useRef(null);
 
   const initGeo = useCallback(() => {
-    const N = 120;           // Reduced from 210
+    const N = 120;           // Optimized count for full-viewport performance
     const pts = fibSphere(N);
     const edges = buildEdges(pts, 0.55, 380); // cap at 380 edges
     const particles = Array.from({ length: 30 }, () => ({
       theta: Math.random() * Math.PI * 2,
       phi: Math.random() * Math.PI,
-      r: 0.06 + Math.random() * 0.35,
+      r: 0.06 + Math.random() * 0.38,
       speed: 0.003 + Math.random() * 0.01,
       size: 1 + Math.random() * 2.2,
       alpha: 0.5 + Math.random() * 0.5,
@@ -109,7 +114,7 @@ export default function CanvasNeuralMesh({ bgColor = '#EBE8E3' }) {
     const onVisibility = () => { paused = document.hidden; };
     document.addEventListener('visibilitychange', onVisibility);
 
-    /* Use setTimeout(16) instead of rAF — yields to browser scheduler between frames */
+    /* Use setTimeout(33) (~30fps) to yield to browser scheduler */
     function render() {
       if (paused || W === 0 || H === 0) { animId = setTimeout(render, 33); return; }
 
@@ -123,10 +128,10 @@ export default function CanvasNeuralMesh({ bgColor = '#EBE8E3' }) {
         rotX = 0.18 + Math.sin(time * 0.07) * 0.09;
       }
 
-      /* Layout */
-      const meshCX = W * 0.64;
-      const meshCY = H * 0.54;
-      const radius = Math.min(W, H) * 0.64;
+      /* Full-bleed responsive layout */
+      const meshCX = W * centerX;
+      const meshCY = H * centerY;
+      const radius = Math.min(W, H) * radiusScale;
       const fov = 2.6;
 
       /* ── 1. BG fill ── */
@@ -225,7 +230,7 @@ export default function CanvasNeuralMesh({ bgColor = '#EBE8E3' }) {
       document.removeEventListener('visibilitychange', onVisibility);
       ro.disconnect();
     };
-  }, [bgColor, initGeo]);
+  }, [bgColor, initGeo, centerX, centerY, radiusScale]);
 
 
   return (

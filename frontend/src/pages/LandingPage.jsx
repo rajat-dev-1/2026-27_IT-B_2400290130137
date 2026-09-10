@@ -10,7 +10,7 @@ import LandingFooter from '../components/landing/LandingFooter';
 
 export default function LandingPage() {
   return (
-    <div className="flex flex-col w-full min-h-screen bg-ink">
+    <div className="flex flex-col w-full min-h-screen bg-[#EBE8E3]" style={{ background: '#EBE8E3' }}>
       {/* Sticky nav replaces the PublicLayout Navbar for the landing page */}
       <LandingNav />
 
