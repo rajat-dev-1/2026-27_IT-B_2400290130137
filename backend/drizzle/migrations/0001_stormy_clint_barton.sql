@@ -1,0 +1,1 @@
+ALTER TABLE "repositories" ADD CONSTRAINT "repositories_user_id_github_repo_id_unique" UNIQUE("user_id","github_repo_id");

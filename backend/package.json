@@ -1,0 +1,49 @@
+{
+  "name": "codehealth-ai-backend",
+  "version": "1.0.0",
+  "description": "CodeHealth AI Backend Phase 1",
+  "main": "server/src/server.js",
+  "type": "module",
+  "scripts": {
+    "dev:server": "nodemon server/src/server.js",
+    "dev:worker": "nodemon worker/src/worker.js",
+    "dev": "concurrently \"npm run dev:server\" \"npm run dev:worker\"",
+    "start:server": "node server/src/server.js",
+    "start:worker": "node worker/src/worker.js",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:studio": "drizzle-kit studio",
+    "test": "npx --no-install cross-env NODE_OPTIONS=--experimental-vm-modules jest --runInBand",
+    "test:unit": "npx --no-install cross-env NODE_OPTIONS=--experimental-vm-modules jest --runInBand --testPathPatterns=\"(duplication|deadCode|phase7.unit)\"",
+    "test:integration": "npx --no-install cross-env NODE_OPTIONS=--experimental-vm-modules jest --runInBand --testPathPatterns=\"(scanRoutes|health|auth|repositories|scanLifecycle|phase7.api|phase7.worker|phase7.idempotency|phase6)\"",
+    "test:coverage": "npx --no-install cross-env NODE_OPTIONS=--experimental-vm-modules jest --coverage --runInBand"
+  },
+  "dependencies": {
+    "@octokit/rest": "^22.0.1",
+    "bullmq": "^6.3.1",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "drizzle-orm": "^0.45.2",
+    "express": "^5.2.1",
+    "express-rate-limit": "^8.6.2",
+    "helmet": "^8.3.0",
+    "ioredis": "^6.0.0",
+    "jsonwebtoken": "^9.0.3",
+    "pg": "^8.23.0",
+    "pino": "^10.3.1",
+    "pino-http": "^11.0.0",
+    "tree-sitter": "^0.21.1",
+    "tree-sitter-javascript": "^0.23.1",
+    "tree-sitter-typescript": "^0.23.2",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "concurrently": "^10.0.5",
+    "cross-env": "^10.1.0",
+    "drizzle-kit": "^0.31.10",
+    "jest": "^30.4.2",
+    "nodemon": "^3.1.14",
+    "supertest": "^7.2.2"
+  }
+}

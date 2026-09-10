@@ -1,0 +1,116 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import "tailwindcss";
+
+/* ─── Design Tokens ─────────────────────────────────────────── */
+:root {
+  --ink: #101613;
+  --pine: #16231D;
+  --slate: #1B2922;
+  --moss-surface: #23342B;
+  --border: #385044;
+  --ivory: #F1F4ED;
+  --sage: #A8B8AD;
+  --muted: #718477;
+  --primary: #68B984;
+  --primary-hover: #86D39B;
+  --primary-soft: #1E3A2A;
+  --info: #57A6C7;
+  --ai: #C09AE8;
+  --warning: #D6A75C;
+  --high: #D97757;
+  --critical: #D75757;
+}
+
+/* ─── Tailwind v4 custom utilities via @theme ───────────────── */
+@theme {
+  --color-ink: var(--ink);
+  --color-pine: var(--pine);
+  --color-slate: var(--slate);
+  --color-moss-surface: var(--moss-surface);
+  --color-border: var(--border);
+  --color-ivory: var(--ivory);
+  --color-sage: var(--sage);
+  --color-muted: var(--muted);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-soft: var(--primary-soft);
+  --color-info: var(--info);
+  --color-ai: var(--ai);
+  --color-warning: var(--warning);
+  --color-high: var(--high);
+  --color-critical: var(--critical);
+
+  --font-family-sans: Inter, Geist, sans-serif;
+  --font-family-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+/* ─── Base Styles ────────────────────────────────────────────── */
+html, body {
+  background-color: var(--ink);
+  color: var(--ivory);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+  box-sizing: border-box;
+  font-family: Inter, Geist, sans-serif;
+}
+
+/* ─── Custom Scrollbar ───────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background-color: var(--pine);
+}
+::-webkit-scrollbar-thumb {
+  background-color: var(--sage);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background-color: #8C9F92;
+}
+
+/* ─── Selection ──────────────────────────────────────────────── */
+::selection {
+  background-color: var(--primary-soft);
+  color: var(--primary);
+}
+
+/* ─── Focus ring ─────────────────────────────────────────────── */
+:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--ink), 0 0 0 4px var(--primary);
+}
+
+/* ─── Prefers-reduced-motion ─────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ─── Utilities ──────────────────────────────────────────────── */
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: var(--border);
+  border-radius: 9999px;
+}

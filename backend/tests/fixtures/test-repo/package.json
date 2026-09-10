@@ -1,0 +1,7 @@
+{
+  "name": "test-repo",
+  "dependencies": {
+    "react": "^16.0.0",
+    "lodash": "^4.17.21"
+  }
+}
