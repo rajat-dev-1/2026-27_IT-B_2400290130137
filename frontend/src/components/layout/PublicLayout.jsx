@@ -1,11 +1,14 @@
 import { Outlet } from 'react-router-dom';
-import Navbar from './Navbar';
 
+/**
+ * PublicLayout — used for /, /login, /auth/callback, and 404.
+ * The landing page (/) manages its own LandingNav and light theme.
+ * Other public pages are standalone.
+ */
 export default function PublicLayout() {
   return (
-    <div className="min-h-screen bg-ink flex flex-col font-sans">
-      <Navbar />
-      <main className="flex-1 w-full pt-20">
+    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+      <main style={{ flex: 1, width: '100%' }}>
         <Outlet />
       </main>
     </div>
