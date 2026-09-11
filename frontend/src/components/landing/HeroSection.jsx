@@ -59,11 +59,24 @@ export default function HeroSection() {
     >
       <style>{`
         .hero-scrim {
-          background: radial-gradient(ellipse 75% 85% at 28% 50%, rgba(235, 232, 227, 0.88) 0%, rgba(235, 232, 227, 0.48) 46%, rgba(235, 232, 227, 0.06) 70%, transparent 100%);
+          background: linear-gradient(
+            90deg,
+            rgba(235, 232, 227, 0.85) 0%,
+            rgba(235, 232, 227, 0.65) 26%,
+            rgba(235, 232, 227, 0.25) 44%,
+            rgba(235, 232, 227, 0.04) 58%,
+            transparent 70%
+          );
         }
         @media (max-width: 768px) {
           .hero-scrim {
-            background: radial-gradient(ellipse 95% 90% at 50% 45%, rgba(235, 232, 227, 0.92) 0%, rgba(235, 232, 227, 0.65) 55%, transparent 100%);
+            background: radial-gradient(
+              ellipse 95% 90% at 50% 35%,
+              rgba(235, 232, 227, 0.92) 0%,
+              rgba(235, 232, 227, 0.70) 55%,
+              rgba(235, 232, 227, 0.20) 80%,
+              transparent 100%
+            );
           }
         }
       `}</style>
