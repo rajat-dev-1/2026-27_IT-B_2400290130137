@@ -2,6 +2,7 @@ import LandingNav from '../components/landing/LandingNav';
 import HeroSection from '../components/landing/HeroSection';
 import MetricsStrip from '../components/landing/MetricsStrip';
 import HowItWorksSection from '../components/landing/HowItWorksSection';
+import PrioritizationTransform from '../components/landing/PrioritizationTransform';
 import AnalysisCapabilities from '../components/landing/AnalysisCapabilities';
 import DashboardShowcase from '../components/landing/DashboardShowcase';
 import SecuritySection from '../components/landing/SecuritySection';
@@ -15,25 +16,28 @@ export default function LandingPage() {
       <LandingNav />
 
       <main className="flex-1 w-full">
-        {/* A. Hero */}
+        {/* 1. Hero: Product promise + animated metaphor */}
         <HeroSection />
 
-        {/* B. Metrics strip */}
+        {/* 2. Capability strip: Fast proof of scan coverage */}
         <MetricsStrip />
 
-        {/* C. How it works */}
+        {/* 3. Workflow: Concrete interaction sequence */}
         <HowItWorksSection />
 
-        {/* D. Analysis capabilities */}
+        {/* 4. Core Differentiator: Raw warning noise to prioritized action plan */}
+        <PrioritizationTransform />
+
+        {/* 5. Analysis Modules: Technical credibility and deterministic depth */}
         <AnalysisCapabilities />
 
-        {/* E. Dashboard showcase */}
+        {/* 6. Dashboard: Outcome product proof with in-view sequence */}
         <DashboardShowcase />
 
-        {/* F. Security / trust */}
+        {/* 7. Security: Asymmetric trust statement, 4 proof points, honest disclaimer */}
         <SecuritySection />
 
-        {/* G. Final CTA */}
+        {/* 8. Final CTA: Decisive return to primary product action */}
         <FinalCtaSection />
       </main>
 

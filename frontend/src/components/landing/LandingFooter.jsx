@@ -17,6 +17,7 @@ const footerCols = [
     heading: 'Product',
     links: [
       { label: 'How it works', href: '#how-it-works', anchor: true },
+      { label: 'Prioritization', href: '#differentiator', anchor: true },
       { label: 'Analysis modules', href: '#analysis', anchor: true },
       { label: 'Security', href: '#security', anchor: true },
     ],

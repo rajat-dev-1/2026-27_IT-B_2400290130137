@@ -61,21 +61,20 @@ export default function HeroSection() {
         .hero-scrim {
           background: linear-gradient(
             90deg,
-            rgba(235, 232, 227, 0.85) 0%,
-            rgba(235, 232, 227, 0.65) 26%,
-            rgba(235, 232, 227, 0.25) 44%,
-            rgba(235, 232, 227, 0.04) 58%,
-            transparent 70%
+            rgba(235, 232, 227, 0.82) 0%,
+            rgba(235, 232, 227, 0.60) 22%,
+            rgba(235, 232, 227, 0.18) 36%,
+            transparent 50%
           );
         }
         @media (max-width: 768px) {
           .hero-scrim {
-            background: radial-gradient(
-              ellipse 95% 90% at 50% 35%,
-              rgba(235, 232, 227, 0.92) 0%,
-              rgba(235, 232, 227, 0.70) 55%,
-              rgba(235, 232, 227, 0.20) 80%,
-              transparent 100%
+            background: linear-gradient(
+              180deg,
+              rgba(235, 232, 227, 0.88) 0%,
+              rgba(235, 232, 227, 0.60) 25%,
+              rgba(235, 232, 227, 0.20) 50%,
+              transparent 75%
             );
           }
         }
@@ -178,10 +177,10 @@ export default function HeroSection() {
               margin: '0 0 24px',
               letterSpacing: '-0.025em',
               textTransform: 'uppercase',
-              textShadow: '0 1px 16px rgba(235, 232, 227, 0.85)',
+              textShadow: '0 0 20px rgba(235, 232, 227, 0.95), 0 1px 4px rgba(235, 232, 227, 0.9)',
             }}
           >
-            Know what<br />your codebase<br />needs next.
+            Find the fixes<br />that matter most.
           </motion.h1>
 
           {/* Supporting paragraph */}
@@ -191,14 +190,14 @@ export default function HeroSection() {
               fontSize: 16.5,
               lineHeight: 1.7,
               color: L.textSub,
-              maxWidth: 460,
+              maxWidth: 480,
               margin: '0 0 36px',
-              textShadow: '0 1px 12px rgba(235, 232, 227, 0.9)',
+              textShadow: '0 0 16px rgba(235, 232, 227, 0.95), 0 1px 3px rgba(235, 232, 227, 0.9)',
             }}
           >
-            CodeHealth AI scans your JavaScript and TypeScript repositories,
-            turns static analysis into an explainable health report, and helps
-            your team focus on the fixes that matter most.
+            You already know your codebase has technical debt—the hard part is knowing what to fix first.
+            CodeHealth AI analyzes complexity, duplication, unused exports, and dependencies to give you
+            a deterministic health score and an ordered, explainable action plan.
           </motion.p>
 
           {/* CTA Buttons */}
@@ -277,7 +276,7 @@ export default function HeroSection() {
             variants={reduced ? {} : itemV}
             style={{ display: 'flex', flexWrap: 'wrap', gap: '8px 18px' }}
           >
-            {['GitHub-connected', 'JS / TS analysis', 'Deterministic scoring', 'Private repos'].map((t, i) => (
+            {['GitHub-connected', 'JS / TS analysis', 'Deterministic scoring', 'Background queue'].map((t, i) => (
               <span
                 key={t}
                 style={{

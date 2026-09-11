@@ -22,6 +22,7 @@ const L = {
 
 const navLinks = [
   { label: 'How It Works', href: '#how-it-works' },
+  { label: 'Prioritization', href: '#differentiator' },
   { label: 'Analysis', href: '#analysis' },
   { label: 'Security', href: '#security' },
 ];

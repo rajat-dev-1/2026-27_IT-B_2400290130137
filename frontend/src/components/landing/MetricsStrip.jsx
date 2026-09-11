@@ -1,15 +1,15 @@
 import Reveal from './Reveal';
 
 const L = {
-  bg: '#EBE8E3',
-  bgAlt: '#E3E0DA',
-  text: '#1A1714',
-  textSub: '#6B6459',
-  textMuted: '#9E9587',
-  border: 'rgba(30,24,14,0.10)',
-  accent: '#2D6A48',
-  warning: '#B5762A',
-  info: '#2A6080',
+  bg: '#1A1714',
+  bgAlt: '#221F1A',
+  text: '#F5F3EF',
+  textSub: '#A8A198',
+  textMuted: '#6A6259',
+  border: 'rgba(245,243,239,0.08)',
+  accent: '#4C9E6A',
+  warning: '#DBA24A',
+  info: '#68A4C4',
 };
 
 const metrics = [

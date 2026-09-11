@@ -33,7 +33,7 @@ describe('IssueFilters', () => {
     const { setFilters } = renderFilters();
     const selects = screen.getAllByRole('combobox');
     const typeSelect = selects[2];
-    await user.selectOptions(typeSelect, 'complexity');
+    await user.selectOptions(typeSelect, 'high_complexity');
     expect(setFilters).toHaveBeenCalled();
   });
 

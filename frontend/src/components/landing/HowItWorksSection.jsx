@@ -6,19 +6,19 @@ import GithubIcon from '../ui/GithubIcon';
 import Reveal from './Reveal';
 
 const L = {
-  bg: '#EBE8E3',
-  bgCard: '#F0EDE8',
-  bgCardActive: '#FAFAF8',
-  text: '#1A1714',
-  textSub: '#6B6459',
-  textMuted: '#9E9587',
-  border: 'rgba(30,24,14,0.11)',
-  borderActive: 'rgba(45,106,72,0.35)',
-  accent: '#2D6A48',
-  accentSoft: 'rgba(45,106,72,0.10)',
-  warning: '#B5762A',
-  critical: '#B83A2A',
-  info: '#2A6080',
+  bg: '#141210',
+  bgCard: '#1E1B17',
+  bgCardActive: '#272320',
+  text: '#F5F3EF',
+  textSub: '#B0A99F',
+  textMuted: '#6A6259',
+  border: 'rgba(245,243,239,0.08)',
+  borderActive: 'rgba(76,158,106,0.40)',
+  accent: '#4C9E6A',
+  accentSoft: 'rgba(76,158,106,0.12)',
+  warning: '#DBA24A',
+  critical: '#E8705A',
+  info: '#68A4C4',
 };
 
 const steps = [
@@ -26,8 +26,8 @@ const steps = [
     num: '01',
     icon: GithubIcon,
     title: 'Connect GitHub',
-    desc: 'Authorize read-only repository access through your existing GitHub workflow. No write permissions required.',
-    sub: 'OAuth 2.0 · Read-only · Encrypted token storage',
+    desc: 'Authorize read-only repository access. OAuth tokens are encrypted server-side; write permissions are never requested.',
+    sub: 'OAuth 2.0 · Read-only access · Server-side encryption',
     visual: (
       <div style={{ width: '100%', maxWidth: 220, display: 'flex', flexDirection: 'column', gap: 10 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, background: L.bg, border: `1px solid ${L.border}`, borderRadius: 10, padding: '10px 14px' }}>
@@ -49,8 +49,8 @@ const steps = [
     num: '02',
     icon: FileSearch,
     title: 'Select a repository',
-    desc: 'Choose a JavaScript or TypeScript repository you want to inspect. Private repositories are fully supported.',
-    sub: 'JS · TS · Private repos · Branch selection',
+    desc: 'Choose any public or private JavaScript or TypeScript repository you maintain.',
+    sub: 'JS & TS · Private repos · Branch selection',
     visual: (
       <div style={{ width: '100%', maxWidth: 220, display: 'flex', flexDirection: 'column', gap: 6 }}>
         {[
@@ -78,8 +78,8 @@ const steps = [
     num: '03',
     icon: Loader2,
     title: 'Run a health scan',
-    desc: 'CodeHealth AI fetches supported files and runs deterministic analysis in the background, without blocking your work.',
-    sub: 'Async worker · Background processing · No interruption',
+    desc: 'The analysis runs in the background, so you can keep moving while your report is prepared.',
+    sub: 'Asynchronous scan · Zero browser slowdown',
     visual: (
       <div style={{ width: '100%', maxWidth: 220, display: 'flex', flexDirection: 'column', gap: 10 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11.5, fontWeight: 500, color: L.textSub }}>
@@ -108,8 +108,8 @@ const steps = [
     num: '04',
     icon: Lightbulb,
     title: 'Prioritize fixes',
-    desc: 'Review health scores, high-impact issues, file details, and clear next steps. AI explains only the most important findings.',
-    sub: 'Scores · Issues · AI explanations · Ordered recommendations',
+    desc: 'Review a 0–100 health score with AI explanations reserved strictly for high-impact bottlenecks.',
+    sub: 'Deterministic scoring · Impact prioritization',
     visual: (
       <div style={{ width: '100%', maxWidth: 220, display: 'flex', flexDirection: 'column', gap: 8 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
@@ -138,20 +138,20 @@ export default function HowItWorksSection() {
   const [active, setActive] = useState(0);
 
   return (
-    <section id="how-it-works" style={{ background: L.bg, padding: '96px 0', overflow: 'hidden' }}>
+    <section id="how-it-works" style={{ background: L.bg, padding: '96px 0', overflow: 'hidden', borderTop: '1px solid rgba(245,243,239,0.06)' }}>
       <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 24px' }}>
 
         {/* Heading */}
         <Reveal>
-          <div style={{ marginBottom: 64, maxWidth: 560 }}>
-            <p style={{ fontFamily: 'monospace', fontSize: 11, letterSpacing: '0.16em', textTransform: 'uppercase', color: L.textMuted, marginBottom: 20 }}>
-              002 / 004 &nbsp;&nbsp; Workflow
+          <div style={{ marginBottom: 64, maxWidth: 640 }}>
+            <p style={{ fontFamily: 'monospace', fontSize: 11, letterSpacing: '0.16em', textTransform: 'uppercase', color: L.accent, fontWeight: 700, marginBottom: 20 }}>
+              The Four-Step Workflow
             </p>
             <h2 style={{ fontSize: 'clamp(2rem, 4vw, 3.4rem)', fontWeight: 800, color: L.text, lineHeight: 1.06, letterSpacing: '-0.025em', textTransform: 'uppercase', margin: '0 0 16px' }}>
-              From repository<br />to insight.
+              From repository<br />to clear next steps.
             </h2>
             <p style={{ fontSize: 16, color: L.textSub, lineHeight: 1.65, margin: 0 }}>
-              A four-step workflow — GitHub connection to prioritized improvement plan.
+              Connect your repository and get an actionable health assessment without disrupting your workflow.
             </p>
           </div>
         </Reveal>

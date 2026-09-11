@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShieldCheck, GitBranch, AlertTriangle, Info, Lightbulb } from 'lucide-react';
+import { ShieldCheck, GitBranch, AlertTriangle, Info, Lightbulb, Loader2 } from 'lucide-react';
 import Reveal from './Reveal';
 
 const L = {
@@ -28,7 +28,7 @@ const repos = [
 ];
 
 const issueItems = [
-  { file: 'auth/permissions.ts', type: 'Complexity hotspot', detail: 'CC 24 — High', sev: 'critical', color: '#B83A2A', Icon: AlertTriangle },
+  { file: 'auth/permissions.ts', type: 'Complexity hotspot', detail: 'CC 24 — High', sev: 'critical', color: '#B83A2A', Icon: AlertTriangle, highlighted: true },
   { file: 'utils/validator.js', type: 'Possible duplicate block', detail: '18 lines · api/validate.js', sev: 'warning', color: '#B5762A', Icon: AlertTriangle },
   { file: 'helpers/format.ts', type: 'Possible unused export', detail: 'formatCurrency', sev: 'info', color: '#2A6080', Icon: Info },
   { file: 'package.json', type: 'Outdated dependency', detail: 'lodash 4.17.15', sev: 'warning', color: '#B5762A', Icon: AlertTriangle },
@@ -51,20 +51,43 @@ const tabs = ['Overview', 'Issues', 'Recommendations'];
 
 export default function DashboardShowcase() {
   const [tab, setTab] = useState('Overview');
+  const [scanState, setScanState] = useState('analyzing'); // 'analyzing' | 'complete'
+  const containerRef = useRef(null);
+
+  useEffect(() => {
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReduced) {
+      setScanState('complete');
+      return;
+    }
+
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        setScanState('analyzing');
+        const timer = setTimeout(() => {
+          setScanState('complete');
+        }, 1400);
+        return () => clearTimeout(timer);
+      }
+    }, { threshold: 0.2 });
+
+    if (containerRef.current) observer.observe(containerRef.current);
+    return () => observer.disconnect();
+  }, []);
 
   return (
-    <section id="dashboard" style={{ background: L.bgAlt, padding: '96px 0', overflow: 'hidden' }}>
+    <section id="dashboard" ref={containerRef} style={{ background: L.bgAlt, padding: '96px 0', overflow: 'hidden' }}>
       <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 24px' }}>
         <Reveal>
-          <div style={{ marginBottom: 64, maxWidth: 560 }}>
-            <p style={{ fontFamily: 'monospace', fontSize: 11, letterSpacing: '0.16em', textTransform: 'uppercase', color: L.textMuted, marginBottom: 20 }}>
-              Dashboard
+          <div style={{ marginBottom: 56, maxWidth: 640 }}>
+            <p style={{ fontFamily: 'monospace', fontSize: 11, letterSpacing: '0.16em', textTransform: 'uppercase', color: L.accent, fontWeight: 700, marginBottom: 16 }}>
+              Product Proof
             </p>
             <h2 style={{ fontSize: 'clamp(2rem, 4vw, 3.4rem)', fontWeight: 800, color: L.text, lineHeight: 1.06, letterSpacing: '-0.025em', textTransform: 'uppercase', margin: '0 0 16px' }}>
               Your analysis,<br />visualized.
             </h2>
             <p style={{ fontSize: 16, color: L.textSub, lineHeight: 1.65, margin: 0 }}>
-              A focused dashboard that turns scan results into a clear picture of where your codebase stands.
+              A focused dashboard designed to give you an immediate understanding of your repository's state.
             </p>
           </div>
         </Reveal>
@@ -126,8 +149,17 @@ export default function DashboardShowcase() {
                     <span style={{ fontSize: 10, fontFamily: 'monospace', color: L.textMuted, padding: '2px 8px', borderRadius: 5, border: `1px solid ${L.border}`, background: L.bgInner }}>main · 86 files</span>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                    <div style={{ width: 6, height: 6, borderRadius: '50%', background: L.accent }} />
-                    <span style={{ fontSize: 11, fontFamily: 'monospace', color: L.accent, fontWeight: 600 }}>Scan complete</span>
+                    {scanState === 'analyzing' ? (
+                      <>
+                        <Loader2 size={12} className="animate-spin" style={{ color: L.warning }} />
+                        <span style={{ fontSize: 11, fontFamily: 'monospace', color: L.warning, fontWeight: 600 }}>Analyzing… (68%)</span>
+                      </>
+                    ) : (
+                      <>
+                        <div style={{ width: 6, height: 6, borderRadius: '50%', background: L.accent }} />
+                        <span style={{ fontSize: 11, fontFamily: 'monospace', color: L.accent, fontWeight: 600 }}>Scan complete</span>
+                      </>
+                    )}
                   </div>
                 </div>
 
@@ -148,8 +180,8 @@ export default function DashboardShowcase() {
                 <div style={{ flex: 1, overflowY: 'auto', padding: 20 }}>
                   <AnimatePresence mode="wait">
                     <motion.div key={tab} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.22 }}>
-                      {tab === 'Overview' && <OverviewTab />}
-                      {tab === 'Issues' && <IssuesTab />}
+                      {tab === 'Overview' && <OverviewTab scanState={scanState} />}
+                      {tab === 'Issues' && <IssuesTab scanState={scanState} />}
                       {tab === 'Recommendations' && <RecsTab />}
                     </motion.div>
                   </AnimatePresence>
@@ -158,12 +190,26 @@ export default function DashboardShowcase() {
             </div>
           </div>
         </Reveal>
+
+        {/* Narrative outcome caption */}
+        <Reveal delay={0.18}>
+          <div style={{ marginTop: 28, textAlign: 'center' }}>
+            <p style={{ fontSize: 15, color: L.text, fontWeight: 600, margin: '0 0 6px', letterSpacing: '-0.01em' }}>
+              A report built for deciding what to improve next — not for collecting more warnings.
+            </p>
+            <p style={{ fontSize: 11, fontFamily: 'monospace', color: L.textMuted, margin: 0 }}>
+              Interactive demo preview · Built from deterministic scan signals
+            </p>
+          </div>
+        </Reveal>
       </div>
     </section>
   );
 }
 
-function OverviewTab() {
+function OverviewTab({ scanState }) {
+  const isDone = scanState === 'complete';
+
   return (
     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
       {/* Score */}
@@ -171,17 +217,28 @@ function OverviewTab() {
         <div style={{ position: 'relative', flexShrink: 0 }}>
           <svg width="60" height="60" viewBox="0 0 60 60" style={{ transform: 'rotate(-90deg)' }}>
             <circle cx="30" cy="30" r="24" fill="none" stroke={L.border} strokeWidth="5" />
-            <motion.circle cx="30" cy="30" r="24" fill="none" stroke={L.accent} strokeWidth="5" strokeLinecap="round"
-              strokeDasharray="150.8" initial={{ strokeDashoffset: 150.8 }} animate={{ strokeDashoffset: 150.8 * 0.22 }} transition={{ duration: 1.4, ease: 'easeOut' }} />
+            <motion.circle
+              cx="30" cy="30" r="24" fill="none" stroke={L.accent} strokeWidth="5" strokeLinecap="round"
+              strokeDasharray="150.8"
+              initial={{ strokeDashoffset: 150.8 }}
+              animate={{ strokeDashoffset: isDone ? 150.8 * 0.22 : 150.8 * 0.65 }}
+              transition={{ duration: 1.2, ease: 'easeOut' }}
+            />
           </svg>
           <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <span style={{ fontSize: 14, fontWeight: 800, color: L.text, transform: 'rotate(90deg)' }}>78</span>
+            <span style={{ fontSize: 14, fontWeight: 800, color: L.text, transform: 'rotate(90deg)' }}>
+              {isDone ? 78 : 42}
+            </span>
           </div>
         </div>
         <div>
           <div style={{ fontSize: 10.5, fontFamily: 'monospace', color: L.textMuted, marginBottom: 2 }}>Health Score</div>
-          <div style={{ fontSize: 18, fontWeight: 800, color: L.text }}>78 / 100</div>
-          <div style={{ fontSize: 10, color: L.accent, marginTop: 4, fontWeight: 500 }}>+4 since last scan</div>
+          <div style={{ fontSize: 18, fontWeight: 800, color: L.text }}>
+            {isDone ? '78 / 100' : 'Analyzing…'}
+          </div>
+          <div style={{ fontSize: 10, color: isDone ? L.accent : L.warning, marginTop: 4, fontWeight: 500 }}>
+            {isDone ? '+4 since last scan' : 'Evaluating debt signals…'}
+          </div>
         </div>
       </div>
 
@@ -207,9 +264,16 @@ function OverviewTab() {
             <div key={label} style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
               <span style={{ fontSize: 10.5, fontFamily: 'monospace', color: L.textMuted, width: 90, flexShrink: 0 }}>{label}</span>
               <div style={{ flex: 1, height: 5, background: L.bgInner, borderRadius: 3, overflow: 'hidden', border: `1px solid ${L.border}` }}>
-                <motion.div style={{ height: '100%', background: color, borderRadius: 3 }} initial={{ width: 0 }} animate={{ width: `${score}%` }} transition={{ duration: 1.1, ease: 'easeOut', delay: 0.2 }} />
+                <motion.div
+                  style={{ height: '100%', background: color, borderRadius: 3 }}
+                  initial={{ width: 0 }}
+                  animate={{ width: isDone ? `${score}%` : '0%' }}
+                  transition={{ duration: 0.9, ease: 'easeOut', delay: 0.1 }}
+                />
               </div>
-              <span style={{ fontSize: 10.5, fontWeight: 700, fontFamily: 'monospace', color, width: 22, textAlign: 'right' }}>{score}</span>
+              <span style={{ fontSize: 10.5, fontWeight: 700, fontFamily: 'monospace', color, width: 22, textAlign: 'right' }}>
+                {isDone ? score : '—'}
+              </span>
             </div>
           ))}
         </div>
@@ -218,14 +282,19 @@ function OverviewTab() {
   );
 }
 
-function IssuesTab() {
+function IssuesTab({ scanState }) {
+  const isDone = scanState === 'complete';
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
       {issueItems.map((it, i) => (
         <motion.div key={it.file} initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.06 }}
           style={{
             display: 'flex', alignItems: 'center', gap: 12, padding: '10px 14px', borderRadius: 10,
-            background: L.bgCard, border: `1px solid ${it.color}25`,
+            background: L.bgCard,
+            border: it.highlighted && isDone ? `1.5px solid ${it.color}` : `1px solid ${it.color}25`,
+            boxShadow: it.highlighted && isDone ? `0 0 16px ${it.color}20` : 'none',
+            transition: 'all 0.4s ease',
           }}
         >
           <it.Icon size={14} style={{ color: it.color, flexShrink: 0 }} />

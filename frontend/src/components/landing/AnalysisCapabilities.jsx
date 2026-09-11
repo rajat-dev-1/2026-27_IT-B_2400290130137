@@ -160,16 +160,22 @@ export default function AnalysisCapabilities() {
       <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 24px' }}>
 
         <Reveal>
-          <div style={{ marginBottom: 64, maxWidth: 560 }}>
-            <p style={{ fontFamily: 'monospace', fontSize: 11, letterSpacing: '0.16em', textTransform: 'uppercase', color: L.textMuted, marginBottom: 20 }}>
-              003 / 004 &nbsp;&nbsp; Analysis modules
+          <div style={{ marginBottom: 48, maxWidth: 640 }}>
+            <p style={{ fontFamily: 'monospace', fontSize: 11, letterSpacing: '0.16em', textTransform: 'uppercase', color: L.accent, fontWeight: 700, marginBottom: 16 }}>
+              Technical Capabilities
             </p>
             <h2 style={{ fontSize: 'clamp(2rem, 4vw, 3.4rem)', fontWeight: 800, color: L.text, lineHeight: 1.06, letterSpacing: '-0.025em', textTransform: 'uppercase', margin: '0 0 16px' }}>
               Six lenses on<br />your codebase.
             </h2>
-            <p style={{ fontSize: 16, color: L.textSub, lineHeight: 1.65, margin: 0 }}>
-              Each module produces deterministic findings. AI explanations are selective, not automatic.
+            <p style={{ fontSize: 16, color: L.textSub, lineHeight: 1.65, margin: '0 0 20px' }}>
+              Each module surfaces specific code health indicators. Category scores are 100% deterministic—no AI hallucination in the metrics.
             </p>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '6px 14px', borderRadius: 8, background: L.accentSoft, border: `1px solid ${L.accent}30` }}>
+              <div style={{ width: 6, height: 6, borderRadius: '50%', background: L.accent }} />
+              <span style={{ fontSize: 12, fontFamily: 'monospace', color: L.accent, fontWeight: 600 }}>
+                Scores come from deterministic analysis. AI explains selected high-priority findings only.
+              </span>
+            </div>
           </div>
         </Reveal>
 

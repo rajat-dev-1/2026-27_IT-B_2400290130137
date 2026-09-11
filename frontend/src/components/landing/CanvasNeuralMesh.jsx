@@ -264,10 +264,12 @@ export default function CanvasNeuralMesh({
       const rotY = prefersReduced ? 0 : Math.cos(time * 0.28) * 0.028;
       const rotZ = -0.04 + (prefersReduced ? 0 : Math.sin(time * 0.22) * 0.018);
 
-      // Responsive positioning: centered composition across desktop & tablet, centered below content on mobile
-      const effectiveCX = centerX !== null ? centerX : (W < 768 ? 0.50 : (W < 1200 ? 0.52 : 0.54));
-      const effectiveCY = centerY !== null ? centerY : (W < 768 ? 0.80 : 0.50);
-      const effectiveRadiusScale = radiusScale !== null ? radiusScale : (W < 768 ? 0.40 : (W < 1200 ? 0.50 : 0.56));
+      // Responsive positioning: centered composition across desktop & tablet, positioned behind headline on mobile
+      const isMobile = W < 768;
+      const isPortraitTablet = W >= 768 && W < 1024 && H > W;
+      const effectiveCX = centerX !== null ? centerX : 0.50;
+      const effectiveCY = centerY !== null ? centerY : (isMobile ? 0.36 : (isPortraitTablet ? 0.48 : 0.50));
+      const effectiveRadiusScale = radiusScale !== null ? radiusScale : (isMobile ? 0.44 : (isPortraitTablet ? 0.52 : 0.62));
 
       const meshCX = W * effectiveCX;
       const meshCY = H * effectiveCY;
