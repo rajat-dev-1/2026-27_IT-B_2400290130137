@@ -146,7 +146,7 @@ export default function HeroSection() {
                 marginBottom: 32,
               }}
             >
-              001 / 004 &nbsp;&nbsp; Repository intelligence
+              GitHub &rarr; JS / TS &rarr; Prioritized fixes
             </span>
           </motion.div>
 
@@ -195,9 +195,10 @@ export default function HeroSection() {
               textShadow: '0 0 16px rgba(235, 232, 227, 0.95), 0 1px 3px rgba(235, 232, 227, 0.9)',
             }}
           >
-            You already know your codebase has technical debt—the hard part is knowing what to fix first.
-            CodeHealth AI analyzes complexity, duplication, unused exports, and dependencies to give you
-            a deterministic health score and an ordered, explainable action plan.
+            You already know your codebase has technical debt.
+            The hard part is knowing what to fix first.
+            CodeHealth AI turns a noisy repository scan into a ranked,
+            explainable action plan&mdash;so you always know your next move.
           </motion.p>
 
           {/* CTA Buttons */}
@@ -267,16 +268,16 @@ export default function HeroSection() {
                 e.currentTarget.style.transform = 'translateY(0)';
               }}
             >
-              See how it works →
+              See how it works
             </button>
           </motion.div>
 
           {/* Trust markers */}
           <motion.div
             variants={reduced ? {} : itemV}
-            style={{ display: 'flex', flexWrap: 'wrap', gap: '8px 18px' }}
+            style={{ display: 'flex', flexWrap: 'wrap', gap: '8px 18px', marginBottom: 14 }}
           >
-            {['GitHub-connected', 'JS / TS analysis', 'Deterministic scoring', 'Background queue'].map((t, i) => (
+            {['Read-only GitHub access', 'JS / TS analysis', 'Deterministic scoring', 'No code changes'].map((t, i) => (
               <span
                 key={t}
                 style={{
@@ -305,6 +306,21 @@ export default function HeroSection() {
               </span>
             ))}
           </motion.div>
+
+          {/* Microcopy — one line, quiet */}
+          <motion.p
+            variants={reduced ? {} : itemV}
+            style={{
+              fontSize: 11.5,
+              color: L.textMuted,
+              fontStyle: 'italic',
+              margin: 0,
+              letterSpacing: '0.01em',
+              textShadow: '0 0 12px rgba(235, 232, 227, 0.9)',
+            }}
+          >
+            From raw findings to a clear first move.
+          </motion.p>
         </motion.div>
       </div>
 
