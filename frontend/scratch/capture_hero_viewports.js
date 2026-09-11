@@ -24,9 +24,9 @@ async function capture() {
   for (const vp of viewports) {
     console.log(`Setting viewport ${vp.width}x${vp.height} for ${vp.name}...`);
     await page.setViewport({ width: vp.width, height: vp.height });
-    await page.goto('http://localhost:5173', { waitUntil: 'networkidle2' });
-    // Wait 3.5 seconds for animation to initialize and rotate slightly
-    await new Promise(r => setTimeout(r, 3500));
+    await page.goto('http://localhost:5173', { waitUntil: 'domcontentloaded', timeout: 15000 });
+    // Wait 2.5 seconds for animation to initialize and render frames
+    await new Promise(r => setTimeout(r, 2500));
 
     const outPath = path.join(outDir, vp.name);
     await page.screenshot({ path: outPath, fullPage: false });

@@ -1,67 +1,82 @@
 import { useEffect, useRef, useCallback } from 'react';
 
 /* ─────────────────────────────────────────────────────────────────────────────
-   CodeHealth AI — Hero Background Animation (Reference-Exact Recreation)
-   Recreates the exact visual from the reference video:
-   1. Bounded 3D spherical neural wireframe cage with organic harmonic perturbation
-   2. Faint concentric circular framing rings in clean neutral grey
-   3. Dark, cavernous charcoal smoke haze in the hollow interior
-   4. Molten Incandescent Core: Burning mesh triangles / flame sheets and glowing
-      filaments woven through the center-lower hemisphere
-   5. Rich Constellation of Ember Nodes: 70+ visible red, orange, and gold glowing
-      dots attached directly to wire vertices and edges
-   6. Foreground dark charcoal wireframe physically crossing in front of the fire
-   7. Fine drifting sparks and embers in 3D convective drift
-   8. Completely contained within the spherical boundary; zero outward bloom
+   CodeHealth AI — Hero Background Animation (1:1 Exact Match to Reference Video)
+   Reference: https://cdn.collectui.com/amplify_video/2094429816816562176/vid/avc1/1440x1080/XW-P0oNGs3ubVaQK-optimized.mp4
+
+   Motion & Visual Anatomy (Confirmed Frame-by-Frame from Video):
+   1. The 3D torus mesh DOES NOT revolve around like a globe/turntable!
+      It stays oriented facing the viewer with a gentle, hypnotic 3D floating hover.
+   2. What MOVES dynamically is the COMBUSTION & ELECTRICAL ENERGY SURGE:
+      The incandescent white-hot combustion flare circulates along the torus ring!
+   3. As the combustion wave travels around the ring:
+      - Wires within proximity ignite into blazing incandescent white-hot filaments and golden halos
+      - Translucent triangular heat sheets burst with radiant fire
+      - Trailing behind the combustion flare, golden bokeh beads and glowing ruby-red embers line the inner rim
+      - Once the wave passes, wires and nodes cool back into crisp, dense dark charcoal/black
+   4. The dark smoke forms a swirling, billowing vortex collar inside the inner central eye
+   5. Clean studio lighting background with delicate concentric hairline guide rings
 ───────────────────────────────────────────────────────────────────────────── */
 
-/* Procedural 3D spherical neural network with combustion core */
-function buildReferenceSphericalMesh(nodeCount) {
+/* Procedural 3D wireframe torus with crystalline faceted topology */
+function buildReferenceTorusMesh(nodeCount) {
   const pts = [];
-  const goldenRatio = (1 + Math.sqrt(5)) / 2;
 
-  // 1. Generate nodes on a spherical shell with multi-layer depth
   for (let i = 0; i < nodeCount; i++) {
-    const y0 = 1 - (i / (nodeCount - 1)) * 2; // -1 to 1
-    const radiusAtY = Math.sqrt(Math.max(0, 1 - y0 * y0));
-    const theta = (2 * Math.PI * i) / goldenRatio;
+    const u = (i / nodeCount) * Math.PI * 2; // Angle around the main ring
+    const v = (i * 9.873) % (Math.PI * 2);  // Angle around the tube cross-section
 
-    // Layering: 70% outer shell, 30% mid-interior
-    const layer = (i % 3 === 0) ? (0.52 + 0.20 * Math.random()) : (0.76 + 0.20 * Math.random());
+    // Major radius (ring diameter from center) with faceted organic modulation
+    const rMajor = 0.65 +
+      0.065 * Math.sin(3 * u) +
+      0.045 * Math.cos(5 * u) +
+      0.025 * Math.sin(8 * u) +
+      0.018 * Math.cos(13 * u);
 
-    // Harmonic perturbation for organic, non-uniform silhouette
-    const perturb = 1.0 +
-      0.10 * Math.sin(3 * theta + 2.5 * y0) +
-      0.06 * Math.cos(5 * theta - 3.0 * y0) +
-      0.04 * Math.sin(7 * theta);
+    // Minor radius (tube thickness: keeps center eye open and outer boundary bounded)
+    const rMinor = 0.28 +
+      0.055 * Math.sin(2 * u + 3 * v) +
+      0.035 * Math.cos(4 * v) +
+      0.020 * Math.sin(7 * v);
 
-    const r = layer * perturb;
-    const x = Math.cos(theta) * radiusAtY * r;
-    const y = y0 * r;
-    const z = Math.sin(theta) * radiusAtY * r * 1.10;
+    // 3D Cartesian coordinates
+    let x = (rMajor + rMinor * Math.cos(v)) * Math.cos(u);
+    let y = (rMajor + rMinor * Math.cos(v)) * Math.sin(u);
+    let z = rMinor * Math.sin(v) * 1.30;
 
-    // Distance to combustion center in the lower-mid quadrant (y ~ -0.08, z ~ 0.12)
-    const dy = y - (-0.08);
-    const dz = z - 0.12;
-    const dist = Math.sqrt(x * x * 0.9 + dy * dy * 1.8 + dz * dz * 1.2);
+    // Organic crystalline displacement noise (creates the jagged faceted silhouette)
+    const jaggedNoise = 0.042 * Math.sin(i * 13.7) + 0.025 * Math.cos(i * 7.9);
+    x += jaggedNoise * Math.cos(i * 2.1);
+    y += jaggedNoise * Math.sin(i * 2.1);
+    z += jaggedNoise * Math.cos(i * 4.3);
 
-    // Linear normalized heat: 1.0 at core, gracefully dropping to 0 at perimeter
-    const fireHeat = Math.max(0, Math.min(1, (1.05 - dist) / (1.05 - 0.28)));
+    // 2D polar angle
+    let angle = Math.atan2(y, x);
+    if (angle < 0) angle += Math.PI * 2;
+
+    const distFromCenter = Math.sqrt(x * x + y * y);
+    const isInnerRim = distFromCenter < 0.58;
+    const isOuterRim = distFromCenter > 0.72;
 
     pts.push({
       x, y, z,
-      baseSize: 0.8 + (i % 3) * 0.45,
-      distFromCenter: Math.sqrt(x * x + y * y + z * z),
-      fireHeat,
-      flickerSpeed: 1.6 + (i % 7) * 0.4,
+      baseX: x, baseY: y, baseZ: z,
+      u, v,
+      angle,
+      isInnerRim,
+      isOuterRim,
+      distFromCenter,
+      baseSize: 0.85 + (i % 4) * 0.40,
+      flickerSpeed: 1.8 + (i % 9) * 0.35,
       flickerPhase: (i * 1.618) % (Math.PI * 2),
-      edgeCount: 0,
+      dynamicHeat: 0,
+      wakeIntensity: 0,
     });
   }
 
-  // 2. Interconnect nearby nodes into tangled wireframe cage
+  // Interconnect nearby nodes into a dense, intricate geometric wireframe network
   const edges = [];
-  const threshold = 0.33;
+  const threshold = 0.315;
   const t2 = threshold * threshold;
 
   for (let i = 0; i < pts.length; i++) {
@@ -72,129 +87,91 @@ function buildReferenceSphericalMesh(nodeCount) {
       const d2 = dx * dx + dy * dy + dz * dz;
 
       if (d2 < t2) {
-        const avgHeat = (pts[i].fireHeat + pts[j].fireHeat) * 0.5;
         edges.push({
           from: i,
           to: j,
           len: Math.sqrt(d2),
-          avgHeat,
         });
       }
     }
   }
 
   edges.sort((a, b) => a.len - b.len);
-  const maxEdges = Math.min(edges.length, Math.floor(nodeCount * 3.4));
+  // High edge density matching the dense bird's-nest wire lattice
+  const maxEdges = Math.min(edges.length, Math.floor(nodeCount * 6.5));
   const activeEdges = edges.slice(0, maxEdges);
 
-  for (const edge of activeEdges) {
-    pts[edge.from].edgeCount++;
-    pts[edge.to].edgeCount++;
-  }
-
-  // 3. Find Ignited Triangles (Mesh facets in the combustion core)
-  // These form the incandescent, glowing magma facets seen in the reference video
+  // Surface triangles for translucent burning flame facets
   const adj = Array.from({ length: pts.length }, () => new Set());
   for (const edge of activeEdges) {
     adj[edge.from].add(edge.to);
     adj[edge.to].add(edge.from);
   }
 
-  const fireTriangles = [];
+  const allTriangles = [];
   for (let i = 0; i < pts.length; i++) {
-    if (pts[i].fireHeat < 0.42) continue;
     const nbrs = Array.from(adj[i]);
     for (let j = 0; j < nbrs.length; j++) {
       const nj = nbrs[j];
-      if (nj <= i || pts[nj].fireHeat < 0.38) continue;
+      if (nj <= i) continue;
       for (let k = j + 1; k < nbrs.length; k++) {
         const nk = nbrs[k];
-        if (nk <= nj || pts[nk].fireHeat < 0.38) continue;
+        if (nk <= nj) continue;
         if (adj[nj].has(nk)) {
-          const avgHeat = (pts[i].fireHeat + pts[nj].fireHeat + pts[nk].fireHeat) / 3;
-          fireTriangles.push({
-            p1: i, p2: nj, p3: nk,
-            heat: avgHeat,
-            flickerSpeed: 1.8 + (fireTriangles.length % 5) * 0.4,
-            flickerPhase: fireTriangles.length * 0.7,
-          });
+          allTriangles.push({ p1: i, p2: nj, p3: nk });
         }
       }
     }
   }
 
-  // Sort by heat and pick the most intense core triangles (20–25 facets)
-  fireTriangles.sort((a, b) => b.heat - a.heat);
-  const coreFlameTriangles = fireTriangles.slice(0, 24);
+  // Internal smoke patches: tightly hugging the inner rim vortex across 360 degrees
+  const internalSmokePatches = [];
+  const smokeCount = 48;
+  for (let i = 0; i < smokeCount; i++) {
+    const u = (i / smokeCount) * Math.PI * 2;
+    const radOffset = 0.37 + 0.08 * Math.sin(i * 3.7);
+    const alpha = (u >= 1.2 && u <= 4.8) ? 0.22 : 0.14;
 
-  // 4. Fine drifting embers & sparks in the combustion zone
-  const sparkCount = Math.round(nodeCount < 150 ? 35 : 65);
-  const driftingSparks = Array.from({ length: sparkCount }, (_, i) => {
-    const t = (Math.random() * 2 - 1) * 0.55;
-    const radY = (Math.random() - 0.5) * 0.34;
-    const radZ = (Math.random() - 0.5) * 0.28;
-
-    const roll = Math.random();
-    let rgb;
-    if (roll < 0.30) {
-      rgb = [255, 248, 220]; // Warm white-gold
-    } else if (roll < 0.65) {
-      rgb = [255, 170, 45];  // Amber
-    } else if (roll < 0.88) {
-      rgb = [235, 85, 25];   // Deep orange
-    } else {
-      rgb = [200, 45, 15];   // Ruby red
-    }
-
-    return {
-      x: t,
-      y: -0.06 + radY,
-      z: radZ,
-      vx: (Math.random() - 0.5) * 0.003,
-      vy: (Math.random() - 0.5) * 0.003,
-      vz: (Math.random() - 0.5) * 0.002,
-      size: 1.0 + Math.random() * 1.5,
-      baseAlpha: 0.35 + Math.random() * 0.55,
-      flickerSpeed: 1.5 + Math.random() * 2.5,
-      flickerPhase: Math.random() * Math.PI * 2,
-      rgb,
-    };
-  });
-
-  // 5. Dark smoke haze patches for the hollow core cavity
-  const smokePatches = Array.from({ length: 8 }, (_, i) => ({
-    offsetAngle: (i / 8) * Math.PI * 2 + i * 0.35,
-    offsetDist: 0.05 + (i % 3) * 0.04,
-    radiusFactor: 0.34 + (i % 3) * 0.09,
-    alpha: 0.35 + (i % 3) * 0.08,
-    driftSpeed: 0.02 + (i % 4) * 0.006,
-    driftPhase: i * 1.2,
-  }));
+    internalSmokePatches.push({
+      baseU: u,
+      radOffset,
+      size: 0.062 + (i % 4) * 0.016,
+      alpha,
+      speed: 0.035 + (i % 3) * 0.012,
+      phase: i * 0.75,
+    });
+  }
 
   return {
     pts,
     edges: activeEdges,
-    coreFlameTriangles,
-    driftingSparks,
-    smokePatches,
+    triangles: allTriangles,
+    internalSmokePatches,
   };
 }
 
 /* 3D perspective projection */
-function projectPoint(px, py, pz, rx, ry, radius, fov, cx, cy) {
+function projectPoint(px, py, pz, rx, ry, rz, radius, fov, cx, cy) {
+  // Y-axis rotation
   const cosY = Math.cos(ry), sinY = Math.sin(ry);
-  const x1 = px * cosY + pz * sinY;
-  const z1 = -px * sinY + pz * cosY;
+  let x1 = px * cosY + pz * sinY;
+  let z1 = -px * sinY + pz * cosY;
 
+  // X-axis rotation
   const cosX = Math.cos(rx), sinX = Math.sin(rx);
-  const y2 = py * cosX - z1 * sinX;
-  const z2 = py * sinX + z1 * cosX;
+  let y2 = py * cosX - z1 * sinX;
+  let z2 = py * sinX + z1 * cosX;
+
+  // Z-axis rotation
+  const cosZ = Math.cos(rz), sinZ = Math.sin(rz);
+  let x3 = x1 * cosZ - y2 * sinZ;
+  let y3 = x1 * sinZ + y2 * cosZ;
 
   const depth = z2 + fov;
   const s = radius / depth;
   return {
-    sx: cx + x1 * s,
-    sy: cy - y2 * s,
+    sx: cx + x3 * s,
+    sy: cy - y3 * s,
     z: z2,
     d: Math.max(0, Math.min(1, (z2 + 1.2) / 2.4)),
   };
@@ -209,8 +186,9 @@ export default function CanvasNeuralMesh({
   const canvasRef = useRef(null);
 
   const initData = useCallback((width) => {
-    const count = width < 768 ? 130 : 240;
-    return buildReferenceSphericalMesh(count);
+    // 480 nodes on desktop for dense geometric network, 240 on mobile
+    const count = width < 768 ? 240 : 480;
+    return buildReferenceTorusMesh(count);
   }, []);
 
   useEffect(() => {
@@ -226,15 +204,13 @@ export default function CanvasNeuralMesh({
 
     let geo = initData(W);
 
-    let rotX = 0.14;
-    let rotY = 0;
     let time = 0;
     let lastTime = performance.now();
     let animId = null;
     let paused = false;
     let isIntersecting = true;
 
-    // Viewport intersection observer: pauses when hero is scrolled past
+    // Viewport intersection observer: pauses when hero is off-screen
     const observer = new IntersectionObserver(([entry]) => {
       isIntersecting = entry.isIntersecting;
     }, { threshold: 0.05 });
@@ -266,7 +242,8 @@ export default function CanvasNeuralMesh({
     const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     /* ─────────────────────────────────────────────────────────────────
-       Main Render Loop: Reference-Exact Layered Combustion
+       Main Render Loop: Matches Video Motion 1:1
+       (Torus stays facing viewer; combustion energy circulates around ring)
     ───────────────────────────────────────────────────────────────── */
     function render(currentTimestamp) {
       if (!isIntersecting || paused || W === 0 || H === 0) {
@@ -280,235 +257,304 @@ export default function CanvasNeuralMesh({
 
       if (!prefersReduced) {
         time += dt;
-        // Slow cinematic 3D rotation: ~90s full revolution
-        rotY += dt * 0.070;
-        rotX = 0.14 + Math.sin(time * 0.07) * 0.04;
       }
 
-      // Responsive positioning: comfortable clearance from text on desktop, below text on mobile
+      // ── 1. Orientation: Mesh stays facing the viewer with hypnotic floating hover (NO turntable spin!) ──
+      const rotX = 0.14 + (prefersReduced ? 0 : Math.sin(time * 0.35) * 0.022);
+      const rotY = prefersReduced ? 0 : Math.cos(time * 0.28) * 0.028;
+      const rotZ = -0.04 + (prefersReduced ? 0 : Math.sin(time * 0.22) * 0.018);
+
+      // Responsive positioning: comfortable clearance from text on desktop, below content on mobile
       const effectiveCX = centerX !== null ? centerX : (W < 768 ? 0.50 : (W < 1400 ? 0.65 : 0.62));
-      const effectiveCY = centerY !== null ? centerY : (W < 768 ? 0.72 : 0.50);
-      const effectiveRadiusScale = radiusScale !== null ? radiusScale : (W < 768 ? 0.50 : (W < 1400 ? 0.60 : 0.66));
+      const effectiveCY = centerY !== null ? centerY : (W < 768 ? 0.82 : 0.50);
+      const effectiveRadiusScale = radiusScale !== null ? radiusScale : (W < 768 ? 0.42 : (W < 1400 ? 0.60 : 0.66));
 
       const meshCX = W * effectiveCX;
       const meshCY = H * effectiveCY;
-      const breathe = prefersReduced ? 1.0 : (1.0 + 0.016 * Math.sin(time * 0.28));
+      const breathe = prefersReduced ? 1.0 : (1.0 + 0.015 * Math.sin(time * 0.30));
       const radius = Math.min(W, H) * effectiveRadiusScale * breathe;
       const fov = 2.8;
 
-      /* ── 0. Base Neutral Background Fill ── */
-      ctx.fillStyle = bgColor;
+      /* ── 2. Base Neutral Background Fill with Studio Lighting ── */
+      const bgGrad = ctx.createRadialGradient(meshCX, meshCY, radius * 0.15, meshCX, meshCY, Math.max(W, H) * 0.95);
+      bgGrad.addColorStop(0, '#EDEAE5');
+      bgGrad.addColorStop(0.55, '#E5E2DC');
+      bgGrad.addColorStop(1.0, '#DDD9D2');
+      ctx.fillStyle = bgGrad;
       ctx.fillRect(0, 0, W, H);
 
-      /* ── 1. Clean Concentric Circular Framing Rings (Untinted Neutral Grey) ── */
-      ctx.lineWidth = 0.80;
-      for (let i = 0; i < 4; i++) {
-        const ringR = radius * (0.55 + i * 0.22);
-        const alpha = (0.075 * (1 - i / 4.2)).toFixed(3);
+      /* ── 3. Architectural Concentric Guide Rings ── */
+      ctx.lineWidth = 0.75;
+      const guideScales = [0.48, 0.78, 1.10, 1.42];
+      for (let i = 0; i < guideScales.length; i++) {
+        const ringR = radius * guideScales[i];
+        const alpha = (0.09 * (1 - i * 0.22)).toFixed(3);
         ctx.beginPath();
         ctx.arc(meshCX, meshCY, ringR, 0, Math.PI * 2);
-        ctx.strokeStyle = `rgba(130, 125, 115, ${alpha})`;
+        ctx.strokeStyle = `rgba(110, 105, 96, ${alpha})`;
         ctx.stroke();
       }
 
-      /* ── 2. Dark Smoky Core (Hollow Interior Occlusion Plume) ── */
-      for (const patch of geo.smokePatches) {
-        const driftX = prefersReduced ? 0 : Math.sin(time * patch.driftSpeed + patch.driftPhase) * radius * 0.04;
-        const driftY = prefersReduced ? 0 : Math.cos(time * patch.driftSpeed * 1.2 + patch.driftPhase) * radius * 0.035;
-        const pCX = meshCX + Math.cos(patch.offsetAngle) * patch.offsetDist * radius + driftX;
-        const pCY = meshCY + Math.sin(patch.offsetAngle) * patch.offsetDist * radius + driftY;
-        const pR = radius * patch.radiusFactor;
+      /* ── 4. Calculate Dynamic Circulating Combustion Flares ── */
+      // Primary combustion flare circulating counter-clockwise around the ring (~18s full cycle)
+      // At t = 0, starts at ~4:30 (5.42 rad) matching the reference screenshot exactly!
+      const f1Speed = prefersReduced ? 0 : 0.32; // rad/s
+      const flare1Angle = (5.42 - time * f1Speed) % (Math.PI * 2);
+      const f1u = (flare1Angle + Math.PI * 2) % (Math.PI * 2);
+      const f1rMajor = 0.65 + 0.065 * Math.sin(3 * f1u) + 0.045 * Math.cos(5 * f1u);
+      const f1rMinor = 0.28;
+      const f1x = (f1rMajor + f1rMinor * Math.cos(0.4)) * Math.cos(f1u);
+      const f1y = (f1rMajor + f1rMinor * Math.cos(0.4)) * Math.sin(f1u);
+      const f1z = f1rMinor * Math.sin(0.4) * 1.30;
 
-        const sg = ctx.createRadialGradient(pCX, pCY, 0, pCX, pCY, pR);
-        sg.addColorStop(0, `rgba(14, 12, 10, ${patch.alpha.toFixed(2)})`);
-        sg.addColorStop(0.55, `rgba(22, 19, 16, ${(patch.alpha * 0.65).toFixed(2)})`);
-        sg.addColorStop(0.85, `rgba(32, 28, 24, ${(patch.alpha * 0.15).toFixed(2)})`);
-        sg.addColorStop(1.0, 'rgba(32, 28, 24, 0)');
-        ctx.fillStyle = sg;
-        ctx.beginPath();
-        ctx.arc(pCX, pCY, pR, 0, Math.PI * 2);
-        ctx.fill();
+      // Secondary combustion flare follows with ~2.5 rad offset (~2:00 at t=0)
+      const flare2Angle = (flare1Angle + 2.5) % (Math.PI * 2);
+      const f2u = (flare2Angle + Math.PI * 2) % (Math.PI * 2);
+      const f2rMajor = 0.65 + 0.065 * Math.sin(3 * f2u);
+      const f2rMinor = 0.26;
+      const f2x = (f2rMajor + f2rMinor * Math.cos(-0.4)) * Math.cos(f2u);
+      const f2y = (f2rMajor + f2rMinor * Math.cos(-0.4)) * Math.sin(f2u);
+      const f2z = f2rMinor * Math.sin(-0.4) * 1.30;
+
+      /* ── 5. Dynamic Vertex Undulation & Heat Calculations ── */
+      for (let i = 0; i < geo.pts.length; i++) {
+        const p = geo.pts[i];
+
+        // Organic vertex breathing/undulation
+        const undulate = prefersReduced ? 0 : 0.014 * Math.sin(time * 1.8 + p.u * 3 + p.v * 2);
+        p.x = p.baseX + (p.baseX / p.distFromCenter) * undulate;
+        p.y = p.baseY + (p.baseY / p.distFromCenter) * undulate;
+        p.z = p.baseZ + undulate;
+
+        // Proximity to circulating flares
+        const dx1 = p.x - f1x, dy1 = p.y - f1y, dz1 = p.z - f1z;
+        const d1 = Math.sqrt(dx1 * dx1 * 1.6 + dy1 * dy1 * 1.6 + dz1 * dz1 * 1.4);
+
+        const dx2 = p.x - f2x, dy2 = p.y - f2y, dz2 = p.z - f2z;
+        const d2 = Math.sqrt(dx2 * dx2 * 1.6 + dy2 * dy2 * 1.6 + dz2 * dz2 * 1.4);
+
+        const h1 = Math.max(0, 1 - d1 / 0.44);
+        const h2 = Math.max(0, 1 - d2 / 0.32) * 0.75;
+        p.dynamicHeat = Math.min(1.0, h1 + h2);
+
+        // Trailing wake calculation for golden beads and embers behind flare 1
+        // In counter-clockwise circulation, wake is where angle is slightly ahead in positive direction
+        const angleDiff = (p.angle - f1u + Math.PI * 2) % (Math.PI * 2);
+        const inWake = (angleDiff >= 0.10 && angleDiff <= 1.70) && p.isInnerRim;
+        p.wakeIntensity = inWake ? Math.max(0, 1 - (angleDiff - 0.10) / 1.60) : 0;
       }
 
-      /* ── 3. Project 3D Mesh Vertices ── */
+      /* ── 6. Project 3D Torus Vertices ── */
       const projs = geo.pts.map(p =>
-        projectPoint(p.x, p.y, p.z, rotX, rotY, radius, fov, meshCX, meshCY)
+        projectPoint(p.x, p.y, p.z, rotX, rotY, rotZ, radius, fov, meshCX, meshCY)
       );
 
-      /* ── 4. Render Background Mesh Wires (z < 0) ── */
-      // Thin wires on the far side of the sphere
-      for (let eIdx = 0; eIdx < geo.edges.length; eIdx++) {
-        const edge = geo.edges[eIdx];
-        const pa = projs[edge.from];
-        const pb = projs[edge.to];
-        if (pa.z >= 0 && pb.z >= 0) continue; // Foreground handled later
+      /* ── 7. Internal Volumetric Smoke (Swirling inside the inner tunnel vortex) ── */
+      for (const smk of geo.internalSmokePatches) {
+        // Smoke gently swirls around the inner rim
+        const swirlU = (smk.baseU - time * smk.speed) % (Math.PI * 2);
+        const sX = Math.cos(swirlU) * smk.radOffset;
+        const sY = Math.sin(swirlU) * smk.radOffset;
+        const sPr = projectPoint(sX, sY, 0, rotX, rotY, rotZ, radius, fov, meshCX, meshCY);
+        const sR = radius * smk.size;
 
-        const avgD = (pa.d + pb.d) * 0.5;
+        const sg = ctx.createRadialGradient(sPr.sx, sPr.sy, 0, sPr.sx, sPr.sy, sR);
+        sg.addColorStop(0, `rgba(12, 10, 8, ${smk.alpha.toFixed(2)})`);
+        sg.addColorStop(0.50, `rgba(18, 15, 12, ${(smk.alpha * 0.55).toFixed(2)})`);
+        sg.addColorStop(1.0, 'rgba(18, 15, 12, 0)');
+        ctx.fillStyle = sg;
         ctx.beginPath();
-        ctx.moveTo(pa.sx, pa.sy);
-        ctx.lineTo(pb.sx, pb.sy);
-
-        if (edge.avgHeat > 0.35) {
-          const a = (0.12 + edge.avgHeat * 0.40 * avgD).toFixed(2);
-          ctx.strokeStyle = `rgba(225, 110, 30, ${a})`;
-          ctx.lineWidth = 0.60 + avgD * 0.40;
-        } else {
-          const a = (0.05 + avgD * 0.28).toFixed(2);
-          ctx.strokeStyle = `rgba(24, 20, 16, ${a})`;
-          ctx.lineWidth = 0.40 + avgD * 0.35;
-        }
-        ctx.stroke();
-      }
-
-      /* ── 5. Render Burning Flame Sheets / Ignited Triangles (Core Interior) ── */
-      // Incandescent, glowing magma facets seen in the reference video
-      for (const tri of geo.coreFlameTriangles) {
-        const p1 = projs[tri.p1];
-        const p2 = projs[tri.p2];
-        const p3 = projs[tri.p3];
-
-        const flicker = prefersReduced ? 1.0 : (0.80 + 0.20 * Math.sin(time * tri.flickerSpeed + tri.flickerPhase));
-        const heat = tri.heat * flicker;
-        const avgD = (p1.d + p2.d + p3.d) / 3;
-
-        // Triangles are filled with a glowing radiant linear gradient
-        const tg = ctx.createLinearGradient(p1.sx, p1.sy, (p2.sx + p3.sx) * 0.5, (p2.sy + p3.sy) * 0.5);
-        const alphaCore = Math.min(1.0, (0.50 + heat * 0.50) * (0.75 + avgD * 0.25));
-
-        tg.addColorStop(0, `rgba(255, 252, 235, ${(alphaCore * 0.95).toFixed(2)})`);
-        tg.addColorStop(0.30, `rgba(255, 185, 45, ${(alphaCore * 0.85).toFixed(2)})`);
-        tg.addColorStop(0.70, `rgba(235, 95, 20, ${(alphaCore * 0.55).toFixed(2)})`);
-        tg.addColorStop(1.0, `rgba(180, 40, 15, ${(alphaCore * 0.20).toFixed(2)})`);
-
-        ctx.fillStyle = tg;
-        ctx.beginPath();
-        ctx.moveTo(p1.sx, p1.sy);
-        ctx.lineTo(p2.sx, p2.sy);
-        ctx.lineTo(p3.sx, p3.sy);
-        ctx.closePath();
+        ctx.arc(sPr.sx, sPr.sy, sR, 0, Math.PI * 2);
         ctx.fill();
-
-        // Incandescent glowing wire edges along these flame triangles
-        ctx.strokeStyle = `rgba(255, 245, 200, ${(alphaCore * 0.90).toFixed(2)})`;
-        ctx.lineWidth = 1.3 + avgD * 0.6;
-        ctx.stroke();
       }
 
-      /* ── 6. Render Drifting Sparks / Embers (Interior Cavity) ── */
-      for (const spark of geo.driftingSparks) {
-        if (!prefersReduced) {
-          spark.x += spark.vx * dt * 60;
-          spark.y += spark.vy * dt * 60;
-          spark.z += spark.vz * dt * 60;
+      /* ── 8. Radiant Wire Facets at Active Combustion Flares ── */
+      for (let tIdx = 0; tIdx < geo.triangles.length; tIdx++) {
+        const tri = geo.triangles[tIdx];
+        const h1 = geo.pts[tri.p1].dynamicHeat;
+        const h2 = geo.pts[tri.p2].dynamicHeat;
+        const h3 = geo.pts[tri.p3].dynamicHeat;
+        const avgHeat = (h1 + h2 + h3) / 3;
 
-          // Strictly constrain within sphere cavity (r < 0.62)
-          const dist = Math.sqrt(spark.x * spark.x + spark.y * spark.y + spark.z * spark.z);
-          if (dist > 0.60) {
-            spark.vx = -spark.vx * 0.85;
-            spark.vy = -spark.vy * 0.85;
-            spark.vz = -spark.vz * 0.85;
-          }
-        }
+        if (avgHeat > 0.32) {
+          const p1 = projs[tri.p1];
+          const p2 = projs[tri.p2];
+          const p3 = projs[tri.p3];
 
-        const spr = projectPoint(spark.x, spark.y, spark.z, rotX, rotY, radius, fov, meshCX, meshCY);
-        const pulse = prefersReduced ? 1.0 : (0.70 + 0.30 * Math.sin(time * spark.flickerSpeed + spark.flickerPhase));
-        const alpha = Math.min(1.0, spark.baseAlpha * pulse * (0.45 + spr.d * 0.55));
+          const pulse = prefersReduced ? 1.0 : (0.85 + 0.15 * Math.sin(time * 3.0 + tIdx));
+          const intensity = Math.min(1.0, avgHeat * pulse);
 
-        if (alpha > 0.05) {
-          const r = spark.size * (0.7 + spr.d * 0.6);
+          const tg = ctx.createLinearGradient(p1.sx, p1.sy, (p2.sx + p3.sx) * 0.5, (p2.sy + p3.sy) * 0.5);
+          tg.addColorStop(0, `rgba(255, 255, 245, ${(intensity * 0.90).toFixed(2)})`);
+          tg.addColorStop(0.30, `rgba(255, 215, 75, ${(intensity * 0.80).toFixed(2)})`);
+          tg.addColorStop(0.70, `rgba(240, 120, 25, ${(intensity * 0.45).toFixed(2)})`);
+          tg.addColorStop(1.0, 'rgba(210, 60, 15, 0)');
+
+          ctx.fillStyle = tg;
           ctx.beginPath();
-          ctx.arc(spr.sx, spr.sy, r, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(${spark.rgb[0]}, ${spark.rgb[1]}, ${spark.rgb[2]}, ${alpha.toFixed(3)})`;
+          ctx.moveTo(p1.sx, p1.sy);
+          ctx.lineTo(p2.sx, p2.sy);
+          ctx.lineTo(p3.sx, p3.sy);
+          ctx.closePath();
           ctx.fill();
         }
       }
 
-      /* ── 7. Render Foreground Mesh Wires (z >= 0) ── */
-      // These dark charcoal wires physically cross IN FRONT OF the flame core!
+      /* ── 9. Render Mesh Wireframe Lines (Crisp Charcoal Black + Dynamic Incandescent Wires) ── */
       for (let eIdx = 0; eIdx < geo.edges.length; eIdx++) {
         const edge = geo.edges[eIdx];
         const pa = projs[edge.from];
         const pb = projs[edge.to];
-        if (pa.z < 0 && pb.z < 0) continue; // Already rendered in background pass
-
         const avgD = (pa.d + pb.d) * 0.5;
-        ctx.beginPath();
-        ctx.moveTo(pa.sx, pa.sy);
-        ctx.lineTo(pb.sx, pb.sy);
 
-        if (edge.avgHeat > 0.25) {
-          // Heated wire: transitions from warm amber near hot nodes into dark charcoal
-          const p = pa.fireHeat > pb.fireHeat ? pa : pb;
-          const o = pa.fireHeat > pb.fireHeat ? pb : pa;
-          const grad = ctx.createLinearGradient(p.sx, p.sy, o.sx, o.sy);
-          const heatAlpha = Math.min(1.0, (0.40 + edge.avgHeat * 0.55) * (0.8 + avgD * 0.3));
+        const heatA = geo.pts[edge.from].dynamicHeat;
+        const heatB = geo.pts[edge.to].dynamicHeat;
+        const edgeHeat = (heatA + heatB) * 0.5;
 
-          grad.addColorStop(0, `rgba(255, 195, 60, ${heatAlpha.toFixed(2)})`);
-          grad.addColorStop(0.35, `rgba(230, 105, 25, ${(heatAlpha * 0.75).toFixed(2)})`);
-          grad.addColorStop(1.0, `rgba(24, 20, 16, ${(0.16 + avgD * 0.38).toFixed(2)})`);
+        if (edgeHeat > 0.32) {
+          // Dynamic Combustion Zone: Incandescent glowing white-hot wires with golden halo!
+          const flicker = prefersReduced ? 1.0 : (0.88 + 0.12 * Math.sin(time * 3.5 + edge.len * 16));
 
-          ctx.strokeStyle = grad;
-          ctx.lineWidth = 0.80 + avgD * 0.65;
+          // Outer golden glow halo
+          ctx.beginPath();
+          ctx.moveTo(pa.sx, pa.sy);
+          ctx.lineTo(pb.sx, pb.sy);
+          ctx.strokeStyle = `rgba(255, 185, 45, ${(0.80 + edgeHeat * 0.20).toFixed(2)})`;
+          ctx.lineWidth = 3.8 + avgD * 1.6;
+          ctx.stroke();
+
+          // Intense white-hot core wire line
+          ctx.beginPath();
+          ctx.moveTo(pa.sx, pa.sy);
+          ctx.lineTo(pb.sx, pb.sy);
+          ctx.strokeStyle = `rgba(255, 255, 250, ${(0.96 * flicker).toFixed(2)})`;
+          ctx.lineWidth = 1.9 + avgD * 0.9;
+          ctx.stroke();
+        } else if (edgeHeat > 0.16) {
+          // Warm amber transition wires
+          ctx.beginPath();
+          ctx.moveTo(pa.sx, pa.sy);
+          ctx.lineTo(pb.sx, pb.sy);
+          const a = (0.35 + avgD * 0.45).toFixed(2);
+          ctx.strokeStyle = `rgba(235, 125, 30, ${a})`;
+          ctx.lineWidth = 0.90 + avgD * 0.60;
+          ctx.stroke();
         } else {
-          // Cool dark wireframe cage
-          const alpha = (0.14 + avgD * 0.44).toFixed(2);
-          ctx.strokeStyle = `rgba(22, 18, 14, ${alpha})`;
-          ctx.lineWidth = 0.52 + avgD * 0.50;
+          // Dense, crisp, high-contrast charcoal/black wireframe everywhere else!
+          ctx.beginPath();
+          ctx.moveTo(pa.sx, pa.sy);
+          ctx.lineTo(pb.sx, pb.sy);
+          const a = (0.42 + avgD * 0.52).toFixed(2);
+          ctx.strokeStyle = `rgba(14, 11, 9, ${a})`;
+          ctx.lineWidth = 0.75 + avgD * 0.65;
+          ctx.stroke();
         }
-        ctx.stroke();
       }
 
-      /* ── 8. Render Glowing Constellation of Ember Nodes (Exact Reference Match!) ── */
-      // 80+ glowing dots in ruby red, vibrant amber, gold, and warm white attached to vertices
+      /* ── 10. Render Active Combustion Blooms ── */
+      // Primary combustion bloom
+      const f1Pr = projectPoint(f1x, f1y, f1z, rotX, rotY, rotZ, radius, fov, meshCX, meshCY);
+      const b1Pulse = prefersReduced ? 1.0 : (0.88 + 0.12 * Math.sin(time * 3.8));
+      const b1R = 68 * (0.85 + f1Pr.d * 0.35) * b1Pulse;
+
+      const bg1 = ctx.createRadialGradient(f1Pr.sx, f1Pr.sy, 0, f1Pr.sx, f1Pr.sy, b1R);
+      bg1.addColorStop(0, 'rgba(255, 255, 255, 1.0)');
+      bg1.addColorStop(0.14, 'rgba(255, 248, 180, 0.95)');
+      bg1.addColorStop(0.36, 'rgba(255, 185, 45, 0.70)');
+      bg1.addColorStop(0.68, 'rgba(230, 95, 20, 0.25)');
+      bg1.addColorStop(1.0, 'rgba(200, 50, 15, 0)');
+      ctx.fillStyle = bg1;
+      ctx.beginPath();
+      ctx.arc(f1Pr.sx, f1Pr.sy, b1R, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Sharp secondary white burst at knot center
+      const core1R = b1R * 0.32;
+      const cbg1 = ctx.createRadialGradient(f1Pr.sx, f1Pr.sy, 0, f1Pr.sx, f1Pr.sy, core1R);
+      cbg1.addColorStop(0, 'rgba(255, 255, 255, 1.0)');
+      cbg1.addColorStop(0.5, 'rgba(255, 250, 210, 0.90)');
+      cbg1.addColorStop(1.0, 'rgba(255, 220, 100, 0)');
+      ctx.fillStyle = cbg1;
+      ctx.beginPath();
+      ctx.arc(f1Pr.sx, f1Pr.sy, core1R, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Secondary combustion bloom
+      const f2Pr = projectPoint(f2x, f2y, f2z, rotX, rotY, rotZ, radius, fov, meshCX, meshCY);
+      const b2Pulse = prefersReduced ? 1.0 : (0.85 + 0.15 * Math.sin(time * 3.2 + 1.2));
+      const b2R = 38 * (0.80 + f2Pr.d * 0.35) * b2Pulse;
+
+      const bg2 = ctx.createRadialGradient(f2Pr.sx, f2Pr.sy, 0, f2Pr.sx, f2Pr.sy, b2R);
+      bg2.addColorStop(0, 'rgba(255, 255, 250, 0.95)');
+      bg2.addColorStop(0.25, 'rgba(255, 235, 120, 0.80)');
+      bg2.addColorStop(0.60, 'rgba(255, 160, 35, 0.40)');
+      bg2.addColorStop(1.0, 'rgba(220, 70, 15, 0)');
+      ctx.fillStyle = bg2;
+      ctx.beginPath();
+      ctx.arc(f2Pr.sx, f2Pr.sy, b2R, 0, Math.PI * 2);
+      ctx.fill();
+
+      /* ── 11. Render Dynamic Golden Beads & Embers Trailing in Wake ── */
       for (let i = 0; i < projs.length; i++) {
         const pr = projs[i];
         const node = geo.pts[i];
-        const r = node.baseSize * (0.65 + pr.d * 1.05);
+        const r = node.baseSize * (0.75 + pr.d * 0.95);
 
-        if (node.fireHeat > 0.10) {
-          // Burning ember node with rich glowing halo
-          const pulse = prefersReduced ? 1.0 : (0.75 + 0.25 * Math.sin(time * node.flickerSpeed + node.flickerPhase));
-          const heat = node.fireHeat * pulse;
+        if (node.dynamicHeat > 0.45) {
+          // White-hot knot vertices
+          ctx.beginPath();
+          ctx.arc(pr.sx, pr.sy, r * 1.6, 0, Math.PI * 2);
+          ctx.fillStyle = 'rgba(255, 255, 255, 1.0)';
+          ctx.fill();
+        } else if (node.wakeIntensity > 0.50) {
+          // Golden orbs / luminous beads in immediate wake along inner rim
+          const pulse = prefersReduced ? 1.0 : (0.78 + 0.22 * Math.sin(time * 2.4 + i));
+          const orbR = (6.0 + (i % 5) * 2.0) * pulse * (0.75 + pr.d * 0.55);
+          const alpha = Math.min(1.0, node.wakeIntensity * 1.2);
 
-          let coreColor, haloColor, haloRadius;
+          const og = ctx.createRadialGradient(pr.sx, pr.sy, 0, pr.sx, pr.sy, orbR * 1.35);
+          og.addColorStop(0, `rgba(255, 255, 230, ${alpha.toFixed(2)})`);
+          og.addColorStop(0.35, `rgba(255, 210, 75, ${(alpha * 0.88).toFixed(2)})`);
+          og.addColorStop(0.75, `rgba(240, 130, 25, ${(alpha * 0.35).toFixed(2)})`);
+          og.addColorStop(1.0, 'rgba(240, 130, 25, 0)');
+          ctx.fillStyle = og;
+          ctx.beginPath();
+          ctx.arc(pr.sx, pr.sy, orbR * 1.35, 0, Math.PI * 2);
+          ctx.fill();
 
-          if (heat > 0.60) {
-            // White-hot / bright gold (near core)
-            coreColor = `rgba(255, 252, 235, ${(0.98 * pr.d + 0.15).toFixed(2)})`;
-            haloColor = 'rgba(255, 190, 45, 0.60)';
-            haloRadius = r * 4.0;
-          } else if (heat > 0.30) {
-            // Vibrant amber / orange (mid zone)
-            coreColor = `rgba(255, 165, 35, ${(0.92 * pr.d + 0.12).toFixed(2)})`;
-            haloColor = 'rgba(240, 95, 20, 0.45)';
-            haloRadius = r * 3.2;
+          ctx.fillStyle = `rgba(255, 250, 215, ${(alpha * 0.95).toFixed(2)})`;
+          ctx.beginPath();
+          ctx.arc(pr.sx, pr.sy, orbR * 0.55, 0, Math.PI * 2);
+          ctx.fill();
+        } else if (node.wakeIntensity > 0.15) {
+          // Tangerine & ruby red embers further back in the wake
+          const pulse = prefersReduced ? 1.0 : (0.75 + 0.25 * Math.sin(time * 2.8 + i));
+          const isRuby = node.wakeIntensity < 0.32;
+          const haloR = (isRuby ? 4.8 : 6.0) * pulse;
+
+          const hg = ctx.createRadialGradient(pr.sx, pr.sy, 0, pr.sx, pr.sy, haloR);
+          if (isRuby) {
+            hg.addColorStop(0, `rgba(235, 45, 25, ${(0.65 * pulse).toFixed(2)})`);
+            hg.addColorStop(1, 'rgba(180, 20, 15, 0)');
           } else {
-            // Deep ruby red (outer combustion perimeter)
-            coreColor = `rgba(230, 50, 18, ${(0.88 * pr.d + 0.10).toFixed(2)})`;
-            haloColor = 'rgba(195, 35, 12, 0.35)';
-            haloRadius = r * 2.5;
+            hg.addColorStop(0, `rgba(255, 130, 25, ${(0.70 * pulse).toFixed(2)})`);
+            hg.addColorStop(1, 'rgba(210, 60, 10, 0)');
           }
-
-          // Soft ember halo
-          const hg = ctx.createRadialGradient(pr.sx, pr.sy, 0, pr.sx, pr.sy, haloRadius);
-          hg.addColorStop(0, haloColor);
-          hg.addColorStop(1, 'rgba(200, 50, 15, 0)');
           ctx.fillStyle = hg;
           ctx.beginPath();
-          ctx.arc(pr.sx, pr.sy, haloRadius, 0, Math.PI * 2);
+          ctx.arc(pr.sx, pr.sy, haloR, 0, Math.PI * 2);
           ctx.fill();
 
-          // Intense burning ember dot
-          ctx.fillStyle = coreColor;
+          ctx.fillStyle = isRuby ? `rgba(255, 65, 35, ${(0.95 * pulse).toFixed(2)})` : `rgba(255, 175, 45, ${(0.98 * pulse).toFixed(2)})`;
           ctx.beginPath();
-          ctx.arc(pr.sx, pr.sy, r * 1.30, 0, Math.PI * 2);
+          ctx.arc(pr.sx, pr.sy, r * 1.1, 0, Math.PI * 2);
           ctx.fill();
         } else {
-          // Cold charcoal node
+          // Crisp, high-contrast dark charcoal/black nodes everywhere else
           ctx.beginPath();
-          ctx.arc(pr.sx, pr.sy, r, 0, Math.PI * 2);
-          const alpha = (0.16 + pr.d * 0.72).toFixed(2);
-          ctx.fillStyle = `rgba(22, 18, 14, ${alpha})`;
+          ctx.arc(pr.sx, pr.sy, r * 0.95, 0, Math.PI * 2);
+          const alpha = (0.42 + pr.d * 0.55).toFixed(2);
+          ctx.fillStyle = `rgba(12, 9, 7, ${alpha})`;
           ctx.fill();
         }
       }
