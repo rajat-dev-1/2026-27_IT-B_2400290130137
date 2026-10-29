@@ -7,6 +7,7 @@ import { repositories } from '../../../server/src/db/schema/repositories.js';
 import { eq, and } from 'drizzle-orm';
 import { SCAN_STATUS } from '../../../shared/constants/scanStatus.js';
 import { runScanPipeline } from './scanOrchestrator.js';
+import { UnrecoverableError } from 'bullmq';
 
 // Helper for delays
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
@@ -144,8 +145,17 @@ export async function processScanLifecycle(job) {
     ];
     
     if (nonRetryableCodes.includes(apiCode)) {
-      // Discard job completely to avoid retries
-      job.discard();
+      // Discard job if supported on job object
+      if (typeof job.discard === 'function') {
+        job.discard();
+      }
+      // In BullMQ, throwing UnrecoverableError prevents retries
+      const unrecoverable = new UnrecoverableError(message);
+      unrecoverable.code = apiCode;
+      unrecoverable.stage = stage;
+      unrecoverable.status = githubStatus;
+      unrecoverable.statusCode = githubStatus;
+      throw unrecoverable;
     }
 
     throw error;

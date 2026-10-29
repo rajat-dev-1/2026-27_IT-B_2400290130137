@@ -45,7 +45,7 @@ describe('Fetch Error Handling Integration', () => {
     const [s] = await db.insert(scans).values({
       repositoryId: testRepo.id,
       userId: testUser.id,
-      commitSha: 'mock-sha',
+      commitSha: null,
       status: SCAN_STATUS.QUEUED,
     }).returning();
     testScan = s;
@@ -65,7 +65,7 @@ describe('Fetch Error Handling Integration', () => {
         repoId: testRepo.id,
         userId: testUser.id,
         attemptCount: 1,
-        commitSHA: 'mock-sha',
+        commitSHA: null,
         trigger: 'manual'
       },
       attemptsMade: 0,

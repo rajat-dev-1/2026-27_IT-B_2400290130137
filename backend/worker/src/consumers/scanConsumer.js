@@ -34,9 +34,12 @@ export function startScanConsumer() {
   scanWorker.on('failed', async (job, err) => {
     logger.error({ event: 'scan.job_failed', jobId: job?.id, err }, 'Job failed');
     
-    // If job has exhausted retries, mark it as failed in the database
-    if (job && job.attemptsMade >= job.opts.attempts) {
-      logger.info({ event: 'scan.final_failure', jobId: job.id }, 'Job exhausted retries, marking as FAILED in DB');
+    const isUnrecoverable = err?.name === 'UnrecoverableError' || err?.constructor?.name === 'UnrecoverableError';
+    const isFinalFailure = job && (job.attemptsMade >= job.opts.attempts || isUnrecoverable);
+
+    // If job has exhausted retries or is non-retryable, mark it as failed in the database
+    if (isFinalFailure) {
+      logger.info({ event: 'scan.final_failure', jobId: job.id, unrecoverable: isUnrecoverable }, 'Job permanently failed, marking as FAILED in DB');
       try {
         if (job.data && job.data.scanId) {
           await db.update(scans)
